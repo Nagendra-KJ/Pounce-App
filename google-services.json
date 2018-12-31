@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "367779168398",
+    "firebase_url": "https://saarang-trial.firebaseio.com",
+    "project_id": "saarang-trial",
+    "storage_bucket": "saarang-trial.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:367779168398:android:56e6c426a08c9ca9",
+        "android_client_info": {
+          "package_name": "rvquizcorp.com.saarangtest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "367779168398-hh4fs0itcd82cr2tdskf11dnj1o37h8v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "rvquizcorp.com.saarangtest",
+            "certificate_hash": "3321cf24a87a59ad7d0456f9996938b7c575a2f7"
+          }
+        },
+        {
+          "client_id": "367779168398-sqafesnv0pbi11dn8l8lrtmditvtlfjf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC44He5UD4vsGHDc4Hm0YzqUPS7fPaObXc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "367779168398-sqafesnv0pbi11dn8l8lrtmditvtlfjf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
