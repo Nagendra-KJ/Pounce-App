@@ -1,10 +1,13 @@
 package rvquizcorp.com.pounce_app;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
@@ -25,6 +28,13 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class RegisterActivity extends AppCompatActivity {
     private Button buttonSubmit;
@@ -118,11 +128,43 @@ public class RegisterActivity extends AppCompatActivity {
                 assert bundle != null;
                 final Bitmap img=(Bitmap) bundle.get("data");
                 profilePicture.setImageBitmap(img);
+                saveFile();
             }
             else if(requestCode==SELECT_FILE)
             {
                 Uri imagePath=data.getData();
                 profilePicture.setImageURI(imagePath);
+            }
+            profilePicture.setRotation(90);
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir=new File(Environment.getExternalStorageDirectory(),getString(R.string.app_name));
+        storageDir.mkdirs();
+        File image = new File(storageDir,imageFileName+".jpg");
+        image.createNewFile();
+        return image;
+    }
+    private void saveFile() {
+        File profilePictureFile=null;
+        try {
+            profilePictureFile=createImageFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(profilePictureFile!=null)
+        {
+            try {
+                FileOutputStream fileOutputStream=new FileOutputStream(profilePictureFile);
+                BitmapDrawable draw=(BitmapDrawable)profilePicture.getDrawable();
+                Bitmap image=draw.getBitmap();
+                image.compress(Bitmap.CompressFormat.JPEG,100,fileOutputStream);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
             }
         }
     }
