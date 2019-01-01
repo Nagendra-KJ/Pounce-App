@@ -1,10 +1,14 @@
 package rvquizcorp.com.pounce_app;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
@@ -25,6 +29,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.channels.FileLock;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class RegisterActivity extends AppCompatActivity {
     private Button buttonSubmit;
@@ -118,13 +131,42 @@ public class RegisterActivity extends AppCompatActivity {
                 assert bundle != null;
                 final Bitmap img=(Bitmap) bundle.get("data");
                 profilePicture.setImageBitmap(img);
+                profilePicture.setDrawingCacheEnabled(true);
+                FileOutputStream fileOutputStream=null;
+                try {
+                    File outputFile=createImageFile();
+                    assert outputFile != null;
+                    fileOutputStream=openFileOutput(outputFile.getName(), Context.MODE_PRIVATE);
+                    assert img != null;
+                    img.compress(Bitmap.CompressFormat.PNG,90,fileOutputStream);
+                    fileOutputStream.close();
+                    profile.setProfilePicPath(outputFile.toURI());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             else if(requestCode==SELECT_FILE)
             {
                 Uri imagePath=data.getData();
                 profilePicture.setImageURI(imagePath);
             }
+            profilePicture.setRotation(90);
         }
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp;
+        File pictureFolder=new File(this.getFilesDir(),"Pictures");
+        if(!pictureFolder.exists())
+            if(!pictureFolder.mkdirs())
+                new Error().showError(this);
+        File image = new File(pictureFolder,imageFileName+".jpg");
+        if(!image.exists())
+            if(!image.createNewFile())
+                return null;
+        return image;
     }
     private void selectImage()
     {
@@ -144,8 +186,8 @@ public class RegisterActivity extends AppCompatActivity {
                         dialog.dismiss();
                         break;
                     case 0:
-                        i=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        startActivityForResult(i,REQUEST_CAMERA);
+                           i=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                           startActivityForResult(i, REQUEST_CAMERA);
                         break;
                     case 1:
                         i=new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -163,11 +205,9 @@ public class RegisterActivity extends AppCompatActivity {
         firebaseAuth.createUserWithEmailAndPassword(profile.getEmailAddress(),textPassword.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                progressDialog.hide();
+                progressDialog.dismiss();
                 if(task.isSuccessful())
                 {
-                    progressDialog.setMessage("Uploading user details");
-                    progressDialog.show();
                     Toast.makeText(RegisterActivity.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
                     firebaseAuth.signInWithEmailAndPassword(profile.getEmailAddress(),textPassword.getText().toString());
                     user=firebaseAuth.getCurrentUser();
@@ -179,7 +219,6 @@ public class RegisterActivity extends AppCompatActivity {
                     databaseUsers.child(Uid).setValue(profile).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            progressDialog.dismiss();
                             if(task.isSuccessful())
                                 Toast.makeText(RegisterActivity.this, "Uploaded Successfully", Toast.LENGTH_SHORT).show();
                             else
