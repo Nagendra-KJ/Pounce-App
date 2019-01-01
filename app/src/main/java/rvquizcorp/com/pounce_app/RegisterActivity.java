@@ -2,6 +2,7 @@ package rvquizcorp.com.pounce_app;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -33,6 +34,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.nio.channels.FileLock;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -128,6 +131,19 @@ public class RegisterActivity extends AppCompatActivity {
                 assert bundle != null;
                 final Bitmap img=(Bitmap) bundle.get("data");
                 profilePicture.setImageBitmap(img);
+                profilePicture.setDrawingCacheEnabled(true);
+                FileOutputStream fileOutputStream=null;
+                try {
+                    File outputFile=createImageFile();
+                    assert outputFile != null;
+                    fileOutputStream=openFileOutput(outputFile.getName(), Context.MODE_PRIVATE);
+                    assert img != null;
+                    img.compress(Bitmap.CompressFormat.PNG,90,fileOutputStream);
+                    fileOutputStream.close();
+                    profile.setProfilePicPath(outputFile.toURI());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             else if(requestCode==SELECT_FILE)
             {
@@ -135,7 +151,6 @@ public class RegisterActivity extends AppCompatActivity {
                 profilePicture.setImageURI(imagePath);
             }
             profilePicture.setRotation(90);
-            saveFile();
         }
     }
 
@@ -152,24 +167,6 @@ public class RegisterActivity extends AppCompatActivity {
             if(!image.createNewFile())
                 return null;
         return image;
-    }
-    private void saveFile() {
-        File profilePictureFile=null;
-        try {
-            profilePictureFile=createImageFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if(profilePictureFile!=null)
-            try {
-                FileOutputStream fileOutputStream = new FileOutputStream(profilePictureFile);
-                Bitmap image = ((BitmapDrawable)profilePicture.getDrawable()).getBitmap();
-                image.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
-                fileOutputStream.flush();
-                fileOutputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
     }
     private void selectImage()
     {
@@ -189,8 +186,8 @@ public class RegisterActivity extends AppCompatActivity {
                         dialog.dismiss();
                         break;
                     case 0:
-                        i=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        startActivityForResult(i,REQUEST_CAMERA);
+                           i=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                           startActivityForResult(i, REQUEST_CAMERA);
                         break;
                     case 1:
                         i=new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
