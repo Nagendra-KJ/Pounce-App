@@ -128,7 +128,6 @@ public class RegisterActivity extends AppCompatActivity {
                 assert bundle != null;
                 final Bitmap img=(Bitmap) bundle.get("data");
                 profilePicture.setImageBitmap(img);
-                saveFile();
             }
             else if(requestCode==SELECT_FILE)
             {
@@ -136,17 +135,22 @@ public class RegisterActivity extends AppCompatActivity {
                 profilePicture.setImageURI(imagePath);
             }
             profilePicture.setRotation(90);
+            saveFile();
         }
     }
 
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir=new File(Environment.getExternalStorageDirectory(),getString(R.string.app_name));
-        storageDir.mkdirs();
-        File image = new File(storageDir,imageFileName+".jpg");
-        image.createNewFile();
+        String imageFileName = "JPEG_" + timeStamp;
+        File pictureFolder=new File(this.getFilesDir(),"Pictures");
+        if(!pictureFolder.exists())
+            if(!pictureFolder.mkdirs())
+                new Error().showError(this);
+        File image = new File(pictureFolder,imageFileName+".jpg");
+        if(!image.exists())
+            if(!image.createNewFile())
+                return null;
         return image;
     }
     private void saveFile() {
@@ -157,16 +161,15 @@ public class RegisterActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         if(profilePictureFile!=null)
-        {
             try {
-                FileOutputStream fileOutputStream=new FileOutputStream(profilePictureFile);
-                BitmapDrawable draw=(BitmapDrawable)profilePicture.getDrawable();
-                Bitmap image=draw.getBitmap();
-                image.compress(Bitmap.CompressFormat.JPEG,100,fileOutputStream);
-            } catch (FileNotFoundException e) {
+                FileOutputStream fileOutputStream = new FileOutputStream(profilePictureFile);
+                Bitmap image = ((BitmapDrawable)profilePicture.getDrawable()).getBitmap();
+                image.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+                fileOutputStream.flush();
+                fileOutputStream.close();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
     }
     private void selectImage()
     {
@@ -205,11 +208,9 @@ public class RegisterActivity extends AppCompatActivity {
         firebaseAuth.createUserWithEmailAndPassword(profile.getEmailAddress(),textPassword.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                progressDialog.hide();
+                progressDialog.dismiss();
                 if(task.isSuccessful())
                 {
-                    progressDialog.setMessage("Uploading user details");
-                    progressDialog.show();
                     Toast.makeText(RegisterActivity.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
                     firebaseAuth.signInWithEmailAndPassword(profile.getEmailAddress(),textPassword.getText().toString());
                     user=firebaseAuth.getCurrentUser();
@@ -221,7 +222,6 @@ public class RegisterActivity extends AppCompatActivity {
                     databaseUsers.child(Uid).setValue(profile).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            progressDialog.dismiss();
                             if(task.isSuccessful())
                                 Toast.makeText(RegisterActivity.this, "Uploaded Successfully", Toast.LENGTH_SHORT).show();
                             else
