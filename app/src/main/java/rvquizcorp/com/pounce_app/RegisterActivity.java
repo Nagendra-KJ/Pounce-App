@@ -1,14 +1,12 @@
 package rvquizcorp.com.pounce_app;
 
-import android.annotation.SuppressLint;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
@@ -141,6 +139,7 @@ public class RegisterActivity extends AppCompatActivity {
                     img.compress(Bitmap.CompressFormat.PNG,90,fileOutputStream);
                     fileOutputStream.close();
                     profile.setProfilePicPath(outputFile.toURI());
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
