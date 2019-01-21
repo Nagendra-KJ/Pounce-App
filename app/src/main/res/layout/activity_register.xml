@@ -13,8 +13,7 @@
         android:layout_height="50dp"
         android:layout_gravity="center_horizontal"
         android:layout_margin="16dp"
-        android:src="@mipmap/default_profile_pic" />
-
+        android:src="@mipmap/default_profile_pic"/>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"

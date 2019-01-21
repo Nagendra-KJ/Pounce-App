@@ -1,6 +1,10 @@
 package rvquizcorp.com.pounce_app;
+/*The basic template for the user. All the fields in this class are filled during the registration process and the data
+is then uploaded onto the database.
+@TODO Remove some unwanted methods and maybe add some new fields like boolean isEmailVerified
+ */
 
-import java.net.URI;
+import android.net.Uri;
 
 public class User {
     private String firstName;
@@ -8,7 +12,7 @@ public class User {
     private String mobileNumber;
     private String emailAddress;
     private String userId;
-    private URI profilePicPath;
+    private Uri profilePicPath;
 
     User(String userId, String firstName, String lastName, String mobileNumber, String emailAddress) {
         this.userId = userId;
@@ -18,7 +22,7 @@ public class User {
         this.emailAddress = emailAddress;
     }
 
-    User(String userId, String firstName, String lastName, String mobileNumber, String emailAddress, URI profilePicPath) {
+    User(String userId, String firstName, String lastName, String mobileNumber, String emailAddress, Uri profilePicPath) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -27,13 +31,14 @@ public class User {
         this.profilePicPath = profilePicPath;
     }
 
-    User(){
-        this.firstName="";
-        this.lastName="";
-        this.emailAddress="";
-        this.mobileNumber="";
-        this.userId="";
+    User() {
+        this.firstName = "";
+        this.lastName = "";
+        this.emailAddress = "";
+        this.mobileNumber = "";
+        this.userId = "";
     }
+
     String getFirstName() {
         return firstName;
     }
@@ -74,11 +79,11 @@ public class User {
         this.userId = userId;
     }
 
-    public URI getProfilePicPath() {
+    Uri getProfilePicPath() {
         return profilePicPath;
     }
 
-    public void setProfilePicPath(URI profilePicPath) {
+    void setProfilePicPath(Uri profilePicPath) {
         this.profilePicPath = profilePicPath;
     }
 }

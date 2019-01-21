@@ -1,11 +1,15 @@
 package rvquizcorp.com.pounce_app;
+/*This is the main login activity and the opening screen of the app. When the activity is loaded the app checks to see
+if there are any accounts already logged into the application. If there are, then the login procedure starts and the
+user is logged into his account. Otherwise, nothing happens.
+ */
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -23,7 +27,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView emailRegisterButton, forgotPasswordTextView;
     private FirebaseAuth firebaseAuth;
     private String email, password;
-    private TextInputLayout textInputEmail,textInputPassword;
+    private TextInputLayout textInputEmail, textInputPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(LoginActivity.this, ForgotPassword.class));
             }
         });
-        if(firebaseAuth.getCurrentUser()!=null)
+        if (firebaseAuth.getCurrentUser() != null)
             login();
     }
 
@@ -67,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful())
                         login();
                     else
-                       new Error().showError(LoginActivity.this);
+                        new Error().showError(LoginActivity.this);
                 }
             });
         } catch (IllegalArgumentException e) {
@@ -82,22 +86,22 @@ public class LoginActivity extends AppCompatActivity {
         emailRegisterButton = findViewById(R.id.emailRegisterButton);
         passwordEditText = findViewById(R.id.passwordEditText);
         forgotPasswordTextView = findViewById(R.id.forgotPasswordTextView);
-        textInputEmail=findViewById(R.id.emailInput);
-        textInputPassword=findViewById(R.id.passwordInput);
+        textInputEmail = findViewById(R.id.emailInput);
+        textInputPassword = findViewById(R.id.passwordInput);
     }
-    private void validate()
-    {
-        if(email.isEmpty())
+
+    private void validate() {
+        if (email.isEmpty())
             textInputEmail.setError("Please enter your email");
         else
             textInputEmail.setError(null);
-        if(password.isEmpty())
+        if (password.isEmpty())
             textInputPassword.setError("Please enter your password");
         else
             textInputPassword.setError(null);
     }
-    private void login()
-    {
+
+    private void login() {
         Intent intent = new Intent(LoginActivity.this, MainScreen.class);
         intent.putExtra("display_name", firebaseAuth.getCurrentUser().getDisplayName());
         startActivity(intent);
