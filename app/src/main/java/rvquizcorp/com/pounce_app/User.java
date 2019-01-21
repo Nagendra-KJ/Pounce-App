@@ -1,4 +1,8 @@
 package rvquizcorp.com.pounce_app;
+/*The basic template for the user. All the fields in this class are filled during the registration process and the data
+is then uploaded onto the database.
+@TODO Remove some unwanted methods and maybe add some new fields like boolean isEmailVerified
+ */
 
 import android.net.Uri;
 
@@ -27,13 +31,14 @@ public class User {
         this.profilePicPath = profilePicPath;
     }
 
-    User(){
-        this.firstName="";
-        this.lastName="";
-        this.emailAddress="";
-        this.mobileNumber="";
-        this.userId="";
+    User() {
+        this.firstName = "";
+        this.lastName = "";
+        this.emailAddress = "";
+        this.mobileNumber = "";
+        this.userId = "";
     }
+
     String getFirstName() {
         return firstName;
     }

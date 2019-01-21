@@ -1,18 +1,20 @@
 package rvquizcorp.com.pounce_app;
-
+/*This activity registers the new user by taking the data from the forms and filling up the fields in the profile
+object. Once all values are filled, the profile is then registered onto the firebase application and the details
+are uploaded onto the database. Once done, the user is redirected back onto the login page.
+ */
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -29,7 +31,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends AppCompatActivity {
-    private static int  SELECT_FILE = 0;
+    private static int SELECT_FILE = 0;
     private Button buttonSubmit;
     private ImageView profilePicture;
     private TextView textFirstName, textLastName, textMobileNumber, textEmailAddress, textPassword;
@@ -38,6 +40,7 @@ public class RegisterActivity extends AppCompatActivity {
     private FirebaseUser user;
     private User profile;
     private TextInputLayout textInputFirstName, textInputLastname, textInputMobileNumber, textInputEmail, textInputPassword;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,9 +118,9 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-                Uri imagePath = data.getData();
-                profilePicture.setImageURI(imagePath);
-                profile.setProfilePicPath(imagePath);
+            Uri imagePath = data.getData();
+            profilePicture.setImageURI(imagePath);
+            profile.setProfilePicPath(imagePath);
 
         }
     }
@@ -160,7 +163,7 @@ public class RegisterActivity extends AppCompatActivity {
                     firebaseAuth.signInWithEmailAndPassword(profile.getEmailAddress(), textPassword.getText().toString());
                     user = firebaseAuth.getCurrentUser();
                     user.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(profile.getFirstName()).build());
-                    if(profile.getProfilePicPath()!=null)
+                    if (profile.getProfilePicPath() != null)
                         user.updateProfile(new UserProfileChangeRequest.Builder().setPhotoUri(profile.getProfilePicPath()).build());
                     user.sendEmailVerification();
                     Toast.makeText(RegisterActivity.this, "Please verify your email to continue", Toast.LENGTH_SHORT).show();
