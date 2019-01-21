@@ -4,6 +4,7 @@ package rvquizcorp.com.pounce_app;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.StrictMode;
 import android.provider.MediaStore;
@@ -37,7 +38,6 @@ public class RegisterActivity extends AppCompatActivity {
     private FirebaseUser user;
     private User profile;
     private TextInputLayout textInputFirstName, textInputLastname, textInputMobileNumber, textInputEmail, textInputPassword;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +84,7 @@ public class RegisterActivity extends AppCompatActivity {
         textInputMobileNumber = findViewById(R.id.textInputMobileNumber);
         textInputEmail = findViewById(R.id.textInputEmailAddress);
         textInputPassword = findViewById(R.id.textInputPassword);
+        profile.setProfilePicPath(null);
     }
 
     private boolean formValidate() {
@@ -117,10 +118,10 @@ public class RegisterActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
                 Uri imagePath = data.getData();
                 profilePicture.setImageURI(imagePath);
+                profile.setProfilePicPath(imagePath);
 
         }
     }
-
 
     private void selectImage() {
         final String[] options = {"Gallery", "Default", "Cancel"};
@@ -147,7 +148,6 @@ public class RegisterActivity extends AppCompatActivity {
         builder.show();
     }
 
-
     public void registerNewUser() {
         final ProgressDialog progressDialog = new ProgressDialog(RegisterActivity.this);
         progressDialog.setMessage("Registering new user");
@@ -161,6 +161,8 @@ public class RegisterActivity extends AppCompatActivity {
                     firebaseAuth.signInWithEmailAndPassword(profile.getEmailAddress(), textPassword.getText().toString());
                     user = firebaseAuth.getCurrentUser();
                     user.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(profile.getFirstName()).build());
+                    if(profile.getProfilePicPath()!=null)
+                        user.updateProfile(new UserProfileChangeRequest.Builder().setPhotoUri(profile.getProfilePicPath()).build());
                     user.sendEmailVerification();
                     Toast.makeText(RegisterActivity.this, "Please verify your email to continue", Toast.LENGTH_SHORT).show();
                     String Uid = user.getUid();
@@ -180,4 +182,5 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
     }
+
 }
