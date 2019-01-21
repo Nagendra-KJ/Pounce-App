@@ -84,7 +84,6 @@ public class RegisterActivity extends AppCompatActivity {
         textInputMobileNumber = findViewById(R.id.textInputMobileNumber);
         textInputEmail = findViewById(R.id.textInputEmailAddress);
         textInputPassword = findViewById(R.id.textInputPassword);
-        profile.setProfilePicPath(null);
     }
 
     private boolean formValidate() {
