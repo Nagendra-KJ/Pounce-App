@@ -17,6 +17,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.Objects;
+
 public class LoginActivity extends AppCompatActivity {
     private EditText emailEditText, passwordEditText;
     private Button emailSignInButton;
@@ -99,7 +101,7 @@ public class LoginActivity extends AppCompatActivity {
     private void login()
     {
         Intent intent = new Intent(LoginActivity.this, MainScreen.class);
-        intent.putExtra("display_name", firebaseAuth.getCurrentUser().getDisplayName());
+        intent.putExtra("display_name", Objects.requireNonNull(firebaseAuth.getCurrentUser()).getDisplayName());
         startActivity(intent);
         finish();
     }
